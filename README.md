@@ -1,2 +1,11 @@
-# ledger-ai
-AI-powered personal financial intelligence platform for transaction analysis, budgeting, forecasting, and financial insights
+# LedgerAI
+
+AI-powered personal financial intelligence platform.
+
+Tech Stack
+
+• Flutter
+• FastAPI
+• PostgreSQL
+• Redis
+• Docker
