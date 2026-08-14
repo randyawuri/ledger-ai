@@ -1,0 +1,49 @@
+services:
+  db:
+    image: postgres:16
+    container_name: ledgerai-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ledgerai
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  postgres_test:
+    image: postgres:16
+    container_name: ledgerai-postgres-test
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ledgerai_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7
+    container_name: ledgerai-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  api:
+    build:
+      context: ./backend
+    container_name: ledgerai-api
+    command: uv run uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  postgres_data:

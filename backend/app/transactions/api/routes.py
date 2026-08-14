@@ -1,4 +1,5 @@
 from datetime import date
+from decimal import Decimal
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -82,8 +83,8 @@ def get_transactions(
     transaction_type: TransactionType | None = None,
     start_date: date | None = None,
     end_date: date | None = None,
-    min_amount: float | None = None,
-    max_amount: float | None = None,
+    min_amount: Decimal| None = None,
+    max_amount: Decimal | None = None,
     merchant: str | None = None,
     description: str | None = None,
     limit: int = Query(default=50, ge=1, le=100),

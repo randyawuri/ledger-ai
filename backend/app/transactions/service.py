@@ -1,9 +1,9 @@
 from uuid import UUID
-from warnings import filters
 
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
+from app.merchants.service import MerchantService
 from app.accounts.domain.models import Account
 from app.automation.service import AutomationService
 from app.transactions.domain.models import Transaction
@@ -12,8 +12,6 @@ from app.transactions.schemas import (
     TransactionCreate,
     TransactionUpdate,
 )
-from tests.fixtures import transactions
-
 
 class TransactionService:
     def __init__(self, db: Session):
@@ -42,9 +40,15 @@ class TransactionService:
         if account is None:
             raise ValueError("Account not found")
 
+        merchant = MerchantService(self.db).resolve(
+            merchant=payload.merchant,
+            description=payload.description,
+        )
+
         transaction = Transaction(
             account_id=payload.account_id,
             category_id=payload.category_id,
+            merchant_id=merchant.id,
             transaction_type=payload.transaction_type,
             amount=payload.amount,
             description=payload.description,
@@ -62,12 +66,12 @@ class TransactionService:
             self,
             transaction_id: UUID,
             user_id: UUID,
-    ):
+    ) -> Transaction | None:
         return self.repository.get_for_user(
-            transaction_id,
-            user_id,
+            transaction_id=transaction_id,
+            user_id=user_id,
         )
-    
+
     def search_transactions(
             self,
             user,
@@ -148,17 +152,7 @@ class TransactionService:
             "limit": limit,
             "offset": offset,
         }
-    
 
-    def get_transaction_for_user(
-            self,
-            transaction_id: UUID,
-            user_id: UUID,
-    ) -> Transaction | None:
-        return self.repository.get_for_user(
-            transaction_id=transaction_id,
-            user_id=user_id,
-        )
 
     def update_transaction(
             self,
@@ -170,13 +164,25 @@ class TransactionService:
             transaction_id=transaction_id,
             user_id=user_id,
         )
-        
+
         if transaction is None:
             return None
-        
+
         updates = payload.model_dump(exclude_unset=True)
-        
+
+        if "merchant" in updates:
+            merchant = MerchantService(self.db).resolve(
+                merchant=updates["merchant"],
+                description=updates.get(
+                    "description",
+                    transaction.description,
+                ),
+            )
+
+            transaction.merchant = updates.pop("merchant")
+            transaction.merchant_id = merchant.id
+
         for field, value in updates.items():
             setattr(transaction, field, value)
-            
+
         return self.repository.update(transaction)

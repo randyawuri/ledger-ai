@@ -4,14 +4,15 @@ from sqlalchemy.orm import Session
 
 from app.merchants.domain.models import Merchant
 
-
 class MerchantRepository:
 
     def __init__(self, db: Session):
         self.db = db
 
-    def create(self, merchant: Merchant):
+    def create(self, merchant: Merchant) -> Merchant:
         self.db.add(merchant)
+        self.db.flush()
+        self.db.refresh(merchant)
         return merchant
 
     def get(self, merchant_id: UUID):
@@ -24,10 +25,9 @@ class MerchantRepository:
     def get_by_name(self, name: str):
         return (
             self.db.query(Merchant)
-            .filter(Merchant.name == name)
+            .filter(Merchant.name.ilike(name))
             .first()
         )
-
     def list(self):
         return (
             self.db.query(Merchant)

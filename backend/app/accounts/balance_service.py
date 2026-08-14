@@ -1,3 +1,4 @@
+from uuid import UUID
 from decimal import Decimal
 
 from sqlalchemy import func
@@ -15,16 +16,23 @@ class BalanceService:
     def __init__(self, db: Session):
         self.db = db
 
-    def calculate(self, account_id):
-
+    def calculate(self, account_id: UUID) -> Decimal:
         account = (
             self.db.query(Account)
             .filter(Account.id == account_id)
             .first()
         )
 
+        if account is None:
+            raise ValueError("Account not found")
+
         credits = (
-            self.db.query(func.coalesce(func.sum(Transaction.amount), 0))
+            self.db.query(
+                func.coalesce(
+                    func.sum(Transaction.amount),
+                    Decimal("0.00"),
+                )
+            )
             .filter(
                 Transaction.account_id == account_id,
                 Transaction.transaction_type == TransactionType.CREDIT,
@@ -33,7 +41,12 @@ class BalanceService:
         )
 
         debits = (
-            self.db.query(func.coalesce(func.sum(Transaction.amount), 0))
+            self.db.query(
+                func.coalesce(
+                    func.sum(Transaction.amount),
+                    Decimal("0.00"),
+                )
+            )
             .filter(
                 Transaction.account_id == account_id,
                 Transaction.transaction_type == TransactionType.DEBIT,
