@@ -179,8 +179,10 @@ class TransactionService:
                 ),
             )
 
-            transaction.merchant = updates.pop("merchant")
+            transaction.merchant = merchant.name
             transaction.merchant_id = merchant.id
+
+            updates.pop("merchant")
 
         for field, value in updates.items():
             setattr(transaction, field, value)

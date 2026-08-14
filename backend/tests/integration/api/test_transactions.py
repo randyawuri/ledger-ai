@@ -7,6 +7,7 @@ from app.auth.security import create_access_token
 from app.db.session import get_db
 from app.main import app
 
+from app.merchants.service import MerchantService
 from tests.factories.account_factory import AccountFactory
 from tests.factories.user_factory import UserFactory
 
@@ -646,7 +647,7 @@ def test_update_transaction(db):
         assert data["id"] == transaction_id
         assert Decimal(data["amount"]) == Decimal("3000.00")
         assert data["description"] == "Updated description"
-        assert data["merchant"] == "Updated merchant"
+        assert data["merchant"] == "Updated Merchant"
 
     finally:
         app.dependency_overrides.clear()
@@ -740,3 +741,13 @@ def test_update_transaction_rejects_another_users_transaction(db):
 
     finally:
         app.dependency_overrides.clear()
+
+def test_resolve_normalizes_merchant_name(db):
+    service = MerchantService(db)
+
+    merchant = service.resolve(
+        merchant="updated merchant",
+        description="Some transaction",
+    )
+
+    assert merchant.name == "Updated Merchant"
