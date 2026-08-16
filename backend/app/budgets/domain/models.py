@@ -1,4 +1,5 @@
 import uuid
+from decimal import Decimal
 from datetime import datetime
 
 from sqlalchemy import DateTime
@@ -40,8 +41,9 @@ class Budget(Base):
         String(100),
     )
 
-    amount: Mapped[float] = mapped_column(
+    amount: Mapped[Decimal] = mapped_column(
         Numeric(15, 2),
+        nullable=False,
     )
 
     created_at: Mapped[datetime] = mapped_column(

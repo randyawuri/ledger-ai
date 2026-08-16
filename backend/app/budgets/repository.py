@@ -1,7 +1,7 @@
 from datetime import date
 from uuid import UUID
 
-from sqlalchemy import extract, func
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.accounts.domain.models import Account
@@ -61,9 +61,16 @@ class BudgetRepository:
             .scalar()
         )
 
-    def get_category(self, category_id: UUID):
+    def get_category_for_user(
+        self,
+        category_id: UUID,
+        user_id: UUID,
+    ):
         return (
             self.db.query(Category)
-            .filter(Category.id == category_id)
+            .filter(
+                Category.id == category_id,
+                Category.user_id == user_id,
+            )
             .first()
         )

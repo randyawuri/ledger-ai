@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.budgets.domain.models import Budget
 from app.db.unit_of_work import UnitOfWork
-
+from app.transactions.domain.models import TransactionType
 
 class BudgetService:
 
@@ -19,13 +19,24 @@ class BudgetService:
         name: str,
         amount: Decimal,
     ):
+        category = self.uow.budgets.get_category_for_user(
+            category_id=category_id,
+            user_id=user_id,
+        )
+        if category is None:
+            raise ValueError("Category not found")
+
+        if category.transaction_type != TransactionType.DEBIT:
+            raise ValueError(
+                "Budgets can only be created for debit categories"
+            )
+
         budget = Budget(
             user_id=user_id,
             category_id=category_id,
             name=name,
             amount=amount,
         )
-
         self.uow.budgets.create(budget)
         self.uow.commit()
 
@@ -88,9 +99,12 @@ class BudgetService:
             else:
                 status = "GOOD"
 
-            category = self.uow.budgets.get_category(
-                budget.category_id
+            category = self.uow.budgets.get_category_for_user(
+                category_id=budget.category_id,
+                user_id=user_id,
             )
+            if category is None:
+                continue
 
             results.append(
                 {
