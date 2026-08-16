@@ -751,3 +751,71 @@ def test_resolve_normalizes_merchant_name(db):
     )
 
     assert merchant.name == "Updated Merchant"
+
+def test_list_transactions_filters_by_multiple_fields(db):
+    user = create_user(db)
+    account = create_account(db, user)
+
+    app.dependency_overrides[get_db] = override_db(db)
+
+    try:
+        client = TestClient(app)
+        headers = auth_headers(user)
+
+        transactions = [
+            {
+                "transaction_type": "debit",
+                "amount": "1500.00",
+                "description": "Lunch at Chicken Republic",
+                "merchant": "Chicken Republic",
+                "transaction_date": "2026-08-01T12:00:00Z",
+            },
+            {
+                "transaction_type": "debit",
+                "amount": "5000.00",
+                "description": "Uber ride",
+                "merchant": "Uber",
+                "transaction_date": "2026-08-02T12:00:00Z",
+            },
+            {
+                "transaction_type": "credit",
+                "amount": "100000.00",
+                "description": "Salary",
+                "merchant": "Employer",
+                "transaction_date": "2026-08-03T12:00:00Z",
+            },
+        ]
+
+        for payload in transactions:
+            payload["account_id"] = str(account.id)
+
+            response = client.post(
+                "/transactions",
+                headers=headers,
+                json=payload,
+            )
+
+            assert response.status_code == 201
+
+        response = client.get(
+            "/transactions",
+            headers=headers,
+            params={
+                "transaction_type": "debit",
+                "min_amount": "1000",
+                "max_amount": "2000",
+                "merchant": "chicken",
+            },
+        )
+
+        assert response.status_code == 200
+
+        data = response.json()
+
+        assert data["total"] == 1
+        assert len(data["items"]) == 1
+        assert data["items"][0]["description"] == "Lunch at Chicken Republic"
+        assert data["items"][0]["merchant"] == "Chicken Republic"
+
+    finally:
+        app.dependency_overrides.clear()
