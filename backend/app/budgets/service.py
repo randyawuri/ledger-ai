@@ -5,7 +5,7 @@ from uuid import UUID
 
 from app.budgets.domain.models import Budget
 from app.db.unit_of_work import UnitOfWork
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 class BudgetService:
 

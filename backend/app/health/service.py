@@ -6,7 +6,7 @@ from app.accounts.domain.models import Account
 from app.budgets.domain.models import Budget
 from app.health.scoring import FinancialHealthScorer
 from app.transactions.domain.models import Transaction
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 
 class FinancialHealthService:

@@ -10,7 +10,7 @@ from app.budgets.domain.models import Budget
 from app.categories.domain.models import Category
 from app.insights import engine
 from app.transactions.domain.models import Transaction
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 from app.dashboard.service import DashboardService
 from app.insights.engine import InsightEngine
 

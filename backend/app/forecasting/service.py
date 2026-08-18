@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 from app.accounts.domain.models import Account
 from app.forecasting.engine import ForecastEngine
 from app.transactions.domain.models import Transaction
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 
 class ForecastService:

@@ -4,7 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 
 class TransactionCreate(BaseModel):

@@ -3,7 +3,7 @@ from datetime import datetime
 from decimal import Decimal
 
 from app.imports.schemas import ImportedTransaction
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 
 class GTBankParser:

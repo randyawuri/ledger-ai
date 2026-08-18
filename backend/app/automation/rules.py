@@ -6,7 +6,7 @@ from sqlalchemy import func
 from app.accounts.domain.models import Account
 from app.budgets.domain.models import Budget
 from app.transactions.domain.models import Transaction
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 
 class AutomationRule(ABC):

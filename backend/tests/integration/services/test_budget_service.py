@@ -4,7 +4,7 @@ from decimal import Decimal
 import pytest
 
 from app.budgets.service import BudgetService
-from app.categories.domain.models import TransactionType
+from app.common.enums import TransactionType
 from app.db.unit_of_work import UnitOfWork
 from app.transactions.domain.models import Transaction
 from tests.factories.account_factory import AccountFactory

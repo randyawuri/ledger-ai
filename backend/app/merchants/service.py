@@ -5,7 +5,8 @@ from app.accounts.domain.models import Account
 from app.merchants.domain.models import Merchant
 from app.merchants.normalizer import MerchantNormalizer
 from app.merchants.repository import MerchantRepository
-from app.transactions.domain.models import Transaction, TransactionType
+from app.transactions.domain.models import Transaction
+from app.common.enums import TransactionType
 
 class MerchantService:
     def __init__(self, db: Session):

@@ -1,7 +1,7 @@
 from decimal import Decimal
 from uuid import UUID
 
-from app.transactions.domain.models import TransactionType
+from app.common.enums import TransactionType
 from app.goals.domain.models import (
     Goal,
     GoalStatus,

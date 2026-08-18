@@ -6,7 +6,8 @@ import pytest
 
 from app.accounts.balance_service import BalanceService
 from app.accounts.domain.models import Account
-from app.transactions.domain.models import Transaction, TransactionType
+from app.transactions.domain.models import Transaction
+from app.common.enums import TransactionType
 from tests.factories.user_factory import UserFactory
 
 
