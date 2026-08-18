@@ -1,18 +1,13 @@
 import uuid
 from datetime import datetime
-from enum import Enum
 
 from sqlalchemy import DateTime, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Enum as SqlEnum
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
+from app.common.enums import TransactionType
 from app.db.base import Base
-
-
-class TransactionType(str, Enum):
-    CREDIT = "credit"
-    DEBIT = "debit"
 
 
 class Category(Base):

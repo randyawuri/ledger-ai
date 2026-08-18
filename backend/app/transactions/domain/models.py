@@ -1,7 +1,6 @@
 import uuid
 from datetime import datetime
 from decimal import Decimal
-from enum import Enum
 
 from sqlalchemy import (
     DateTime,
@@ -18,12 +17,8 @@ from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from sqlalchemy.orm import relationship
 
+from app.common.enums import TransactionType
 from app.db.base import Base
-
-
-class TransactionType(str, Enum):
-    CREDIT = "credit"
-    DEBIT = "debit"
 
 
 class Transaction(Base):

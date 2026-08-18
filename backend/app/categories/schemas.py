@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from app.categories.domain.models import TransactionType
+from app.common.enums import TransactionType
 
 
 class CategoryCreate(BaseModel):
