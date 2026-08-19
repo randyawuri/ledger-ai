@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
 from app.budgets.schemas import (
@@ -31,12 +31,18 @@ def create_budget(
     uow = UnitOfWork(db)
     service = BudgetService(uow)
 
-    return service.create_budget(
-        current_user.id,
-        budget.category_id,
-        budget.name,
-        budget.amount,
-    )
+    try:
+        return service.create_budget(
+            current_user.id,
+            budget.category_id,
+            budget.name,
+            budget.amount,
+        )
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e),
+        )
 
 
 @router.get(
